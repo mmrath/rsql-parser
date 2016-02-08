@@ -1,6 +1,8 @@
-package main.java.com.mmrath;
+package com.mmrath;
 
-import com.mmrath.rsql.*;
+import com.mmrath.rsql.RsqlLexer;
+import com.mmrath.rsql.RsqlParser;
+import com.mmrath.rsql.RsqlParserBaseListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -9,9 +11,7 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-/**
- * Created by murali on 6/02/2016.
- */
+
 public class App {
 
     public static void main(String[] args) {
@@ -276,12 +276,12 @@ public class App {
 
         @Override
         public void visitTerminal(TerminalNode node) {
-            System.out.println("visitTerminal:"+node.getText());
+            System.out.println("visitTerminal:" + node.getText());
         }
 
         @Override
         public void visitErrorNode(ErrorNode node) {
-            System.out.println("visitErrorNode:"+node.getText());
+            System.out.println("visitErrorNode:" + node.getText());
         }
 
         private void log(String exitExpression, RuleContext ctx) {
@@ -289,6 +289,7 @@ public class App {
         }
 
     }
+
     private static void log(String exitExpression, RuleContext ctx) {
         System.out.println(exitExpression + ":" + ctx.getText());
     }
