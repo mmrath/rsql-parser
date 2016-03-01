@@ -74,22 +74,22 @@ comparisionOperator
   ;
 
 betweenPredicate
-  : predicand=columnName betweenPredicate_part_2
+  : predicand=columnName betweenPredicatePart2
   ;
 
-betweenPredicate_part_2
+betweenPredicatePart2
   : (NOT)? BETWEEN begin=valueExpression AND end=valueExpression
   ;
 
 inPredicate
-  : predicand=columnName  NOT? IN inPredicate_value
+  : predicand=columnName  NOT? IN inPredicateValue
   ;
 
-inPredicate_value
-  : LEFT_PAREN in_value_list RIGHT_PAREN
+inPredicateValue
+  : LEFT_PAREN inValueList RIGHT_PAREN
   ;
 
-in_value_list
+inValueList
   : valueExpression  (COMMA valueExpression)*
   ;
 
@@ -112,10 +112,10 @@ valueExpression
   ;
 
 numericValueExpression
-  : (sign)? numeric_primary
+  : (sign)? numericPrimary
   ;
 
-numeric_primary
+numericPrimary
   : NUMBER
   | REAL_NUMBER
   ;

@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 
@@ -24,12 +23,14 @@ public class App {
     }
 
     public static void rsql() {
-        RsqlLexer lexer = new RsqlLexer(new ANTLRInputStream("ab LIKE 'DE' and c = d or d > 4.3"));
+        RsqlLexer lexer = new RsqlLexer(new ANTLRInputStream("ab > 'DE' and (c = d or d > 4.3) and e>4"));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         RsqlParser rsqlParser = new RsqlParser(tokenStream);
-        ParserRuleContext tree = rsqlParser.expression();
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(new RsqlParserListenerImpl(), tree);
+        RsqlParser.ExpressionContext tree = rsqlParser.expression();
+        RsqlStatement rsqlStatement = new RsqlExpressionVisitor().visit(tree);
+        System.out.println(rsqlStatement);
+        //ParseTreeWalker walker = new ParseTreeWalker();
+        //walker.walk(new RsqlParserListenerImpl(), tree);
     }
 
     static class RsqlParserListenerImpl extends RsqlParserBaseListener {
@@ -145,12 +146,12 @@ public class App {
         }
 
         @Override
-        public void enterBetweenPredicate_part_2(RsqlParser.BetweenPredicate_part_2Context ctx) {
+        public void enterBetweenPredicatePart2(RsqlParser.BetweenPredicatePart2Context ctx) {
             log("enterBetweenPredicate_part_2", ctx);
         }
 
         @Override
-        public void exitBetweenPredicate_part_2(RsqlParser.BetweenPredicate_part_2Context ctx) {
+        public void exitBetweenPredicatePart2(RsqlParser.BetweenPredicatePart2Context ctx) {
             log("exitBetweenPredicate_part_2", ctx);
         }
 
@@ -165,33 +166,33 @@ public class App {
         }
 
         @Override
-        public void enterInPredicate_value(RsqlParser.InPredicate_valueContext ctx) {
-            log("enterInPredicate_value", ctx);
+        public void enterInPredicateValue(RsqlParser.InPredicateValueContext ctx) {
+            log("enterInPredicateValue", ctx);
         }
 
         @Override
-        public void exitInPredicate_value(RsqlParser.InPredicate_valueContext ctx) {
-            log("exitInPredicate_value", ctx);
+        public void exitInPredicateValue(RsqlParser.InPredicateValueContext ctx) {
+            log("exitInPredicateValue", ctx);
         }
 
         @Override
-        public void enterIn_value_list(RsqlParser.In_value_listContext ctx) {
-            log("enterIn_value_list", ctx);
+        public void enterInValueList(RsqlParser.InValueListContext ctx) {
+            log("enterInValueList", ctx);
         }
 
         @Override
-        public void exitIn_value_list(RsqlParser.In_value_listContext ctx) {
-            log("exitIn_value_list", ctx);
+        public void exitInValueList(RsqlParser.InValueListContext ctx) {
+            log("exitInValueList", ctx);
         }
 
         @Override
         public void enterPatternMatchingPredicate(RsqlParser.PatternMatchingPredicateContext ctx) {
-            log("enterPattern_matchingPredicate", ctx);
+            log("enterPatternMatchingPredicate", ctx);
         }
 
         @Override
         public void exitPatternMatchingPredicate(RsqlParser.PatternMatchingPredicateContext ctx) {
-            log("exitPattern_matchingPredicate", ctx);
+            log("exitPatternMatchingPredicate", ctx);
         }
 
         @Override
@@ -235,13 +236,13 @@ public class App {
         }
 
         @Override
-        public void enterNumeric_primary(RsqlParser.Numeric_primaryContext ctx) {
-            log("enterNumeric_primary", ctx);
+        public void enterNumericPrimary(RsqlParser.NumericPrimaryContext ctx) {
+            log("enterNumericPrimary", ctx);
         }
 
         @Override
-        public void exitNumeric_primary(RsqlParser.Numeric_primaryContext ctx) {
-            log("exitNumeric_primary", ctx);
+        public void exitNumericPrimary(RsqlParser.NumericPrimaryContext ctx) {
+            log("exitNumericPrimary", ctx);
         }
 
         @Override
