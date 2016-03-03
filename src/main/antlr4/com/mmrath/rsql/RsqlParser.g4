@@ -74,11 +74,15 @@ comparisionOperator
   ;
 
 betweenPredicate
-  : predicand=columnName betweenPredicatePart2
+  : predicand=columnName (NOT)? BETWEEN betweenBegin AND betweenEnd
   ;
 
-betweenPredicatePart2
-  : (NOT)? BETWEEN begin=valueExpression AND end=valueExpression
+betweenBegin
+  :valueExpression
+  ;
+
+betweenEnd
+  :valueExpression
   ;
 
 inPredicate

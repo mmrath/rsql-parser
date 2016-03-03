@@ -23,7 +23,8 @@ public class App {
     }
 
     public static void rsql() {
-        RsqlLexer lexer = new RsqlLexer(new ANTLRInputStream("ab > 'DE' and (c = d or d > 4.3) and e>4"));
+        RsqlLexer lexer = new RsqlLexer(new ANTLRInputStream("ab > 'DE' and (c = d or d > 4.3) and e>4 or " +
+                "rere in (20,30,40,50) and defer between 2 and 3 or rerer not in ('432','234324') "));
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         RsqlParser rsqlParser = new RsqlParser(tokenStream);
         RsqlParser.ExpressionContext tree = rsqlParser.expression();
@@ -143,16 +144,6 @@ public class App {
         @Override
         public void exitBetweenPredicate(RsqlParser.BetweenPredicateContext ctx) {
             log("exitBetweenPredicate", ctx);
-        }
-
-        @Override
-        public void enterBetweenPredicatePart2(RsqlParser.BetweenPredicatePart2Context ctx) {
-            log("enterBetweenPredicate_part_2", ctx);
-        }
-
-        @Override
-        public void exitBetweenPredicatePart2(RsqlParser.BetweenPredicatePart2Context ctx) {
-            log("exitBetweenPredicate_part_2", ctx);
         }
 
         @Override

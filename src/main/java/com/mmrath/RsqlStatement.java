@@ -1,6 +1,8 @@
 package com.mmrath;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class RsqlStatement {
@@ -8,12 +10,36 @@ public class RsqlStatement {
     private static final String AND = " AND ";
     private static final String COMPARISION_TEMPLATE = "%s %s ?";
 
+    private static final String IS_NULL_TEMPLATE = "%s IS NULL";
+    private static final String IS_NOT_NULL_TEMPLATE = "%s IN NOT NULL";
+    private static final String LIKE_TEMPLATE = "%s LIKE ?";
+    private static final String NOT_LIKE_TEMPLATE = "%s NOT LIKE ?";
+
+    private static final String BETWEEN_TEMPLATE = "%s BETWEEN ? AND ?";
+    private static final String NOT_BETWEEN_TEMPLATE = "%s NOT BETWEEN ? AND ?";
+
+    private static final String IN_TEMPLATE = "%s IN";
+    private static final String NOT_IN_TEMPLATE = "%s NOT IN";
+
+    private static final String COMMA = ",";
+
+
     private final String whereClause;
     private final List<Object> params;
 
     public RsqlStatement(String whereClause, List<Object> params) {
         this.whereClause = whereClause;
         this.params = params;
+    }
+
+    public RsqlStatement(String whereClause, Object... params) {
+        this.whereClause = whereClause;
+        if (params != null) {
+            this.params = Arrays.asList(params);
+        } else {
+            this.params = Collections.emptyList();
+        }
+
     }
 
     @Override
@@ -53,28 +79,71 @@ public class RsqlStatement {
         return new RsqlStatement(whereSql, params);
     }
 
-    public static RsqlStatement equalPredicate(String columnCode, Object value) {
+    public static RsqlStatement equal(String columnCode, Object value) {
         return comparisionPredicate(columnCode, "=", value);
     }
 
-    public static RsqlStatement notEqualPredicate(String columnCode, Object value) {
+    public static RsqlStatement notEqual(String columnCode, Object value) {
         return comparisionPredicate(columnCode, "!=", value);
     }
 
-    public static RsqlStatement lessOrEqualPredicate(String columnCode, Object value) {
+    public static RsqlStatement lessOrEqual(String columnCode, Object value) {
         return comparisionPredicate(columnCode, "<=", value);
     }
 
-    public static RsqlStatement lessThanPredicate(String columnCode, Object value) {
+    public static RsqlStatement lessThan(String columnCode, Object value) {
         return comparisionPredicate(columnCode, "<", value);
     }
 
-    public static RsqlStatement greaterOrEqualPredicate(String columnCode, Object value) {
+    public static RsqlStatement greaterOrEqual(String columnCode, Object value) {
         return comparisionPredicate(columnCode, ">=", value);
     }
 
-    public static RsqlStatement greeaterThanPredicate(String columnCode, Object value) {
+    public static RsqlStatement greeaterThan(String columnCode, Object value) {
         return comparisionPredicate(columnCode, ">", value);
+    }
+
+    public static RsqlStatement isNotNull(String column) {
+        return new RsqlStatement(String.format(IS_NOT_NULL_TEMPLATE, getColumnName(column)));
+    }
+
+    public static RsqlStatement isNull(String column) {
+        return new RsqlStatement(String.format(IS_NULL_TEMPLATE, getColumnName(column)));
+    }
+
+    public static RsqlStatement notLike(String column, Object value) {
+        return new RsqlStatement(String.format(NOT_LIKE_TEMPLATE, getColumnName(column)), value);
+    }
+
+    public static RsqlStatement like(String column, Object value) {
+        return new RsqlStatement(String.format(LIKE_TEMPLATE, getColumnName(column)), value);
+    }
+
+    public static RsqlStatement notBetween(String column, Object start, Object end) {
+        return new RsqlStatement(String.format(NOT_BETWEEN_TEMPLATE, getColumnName(column)), start, end);
+    }
+
+    public static RsqlStatement between(String column, Object start, Object end) {
+        return new RsqlStatement(String.format(BETWEEN_TEMPLATE, getColumnName(column)), start, end);
+    }
+
+    public static RsqlStatement notIn(String column, List<Object> values) {
+
+        StringBuilder inClause = new StringBuilder(String.format(NOT_IN_TEMPLATE, getColumnName(column)));
+        inClause.append(" (");
+        inClause.append(repeat("?", COMMA, values.size()));
+        inClause.append(")");
+
+        return new RsqlStatement(inClause.toString(), values);
+    }
+
+    public static RsqlStatement in(String column, List<Object> values) {
+        StringBuilder inClause = new StringBuilder(String.format(IN_TEMPLATE, getColumnName(column)));
+        inClause.append(" (");
+        inClause.append(repeat("?", COMMA, values.size()));
+        inClause.append(")");
+
+        return new RsqlStatement(inClause.toString(), values);
     }
 
     private static RsqlStatement comparisionPredicate(String columnCode, String operator, Object value) {
@@ -85,6 +154,14 @@ public class RsqlStatement {
 
     private static String getColumnName(String columnCode) {
         return columnCode;
+    }
+
+    private static String repeat(String s, String separator, int count) {
+        StringBuilder string = new StringBuilder((s.length() + separator.length()) * count);
+        while (--count > 0) {
+            string.append(s).append(separator);
+        }
+        return string.append(s).toString();
     }
 
 }
